@@ -5,10 +5,10 @@
         <h2><router-link to="/step-1">Step 1</router-link></h2>
       </div>
       <div class="col-md-4 py-2 bg-light text-center border rounded-pill border-dark">
-        <h2><router-link :class="this.modal && this.modalColor ? '' : 'disable-link'" :to="'/step-2/' + this.modal + '-' + this.modalColor">Step 2</router-link></h2>
+        <h2><router-link :class="this.modal && this.modalColor ? '' : 'disable-link'" :to="stepTwoURL">Step 2</router-link></h2>
       </div>
       <div class="col-md-4 py-2 bg-light text-center border rounded-pill border-dark">
-        <h2><router-link to="/step-3">Step 3</router-link></h2>
+        <h2><router-link to="">Step 3</router-link></h2>
       </div>
     </div>
     <h3>Step 1: Choose your model and color</h3>
@@ -56,7 +56,6 @@ export default {
         this.selectedModal = this.modals[0]
       })
     } catch (e) {
-      console.log(e)
       this.modals = []
     }
   },
@@ -66,7 +65,16 @@ export default {
       modal: '',
       modalColor: '',
       selectedModal: [],
-      currentModalImg: ''
+      currentModalImg: '',
+      stepTwoURL: ''
+    }
+  },
+  computed: {
+    stepTwoURL() {
+      if (this.modal && this.modalColor) {
+        return '/step-2/' + this.modal + '-' + this.modalColor;
+      }
+      return '';
     }
   },
   methods: {

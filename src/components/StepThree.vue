@@ -5,10 +5,10 @@
         <h2><router-link to="/step-1">Step 1</router-link></h2>
       </div>
       <div class="col-md-4 py-2 bg-light text-center border rounded-pill border-dark">
-        <h2><router-link :to="'/step-2/' + this.id">Step 2</router-link></h2>
+        <h2><router-link :to="'/step-2/' + this.config">Step 2</router-link></h2>
       </div>
       <div class="col-md-4 py-2 bg-light text-center border rounded-pill border-dark">
-        <h2><router-link :to="'/step-3' + this.id">Step 3</router-link></h2>
+        <h2><router-link :to="'/step-3' + this.config">Step 3</router-link></h2>
       </div>
     </div>
     <h3>Step 3: Summary</h3>
@@ -17,21 +17,36 @@
         <h5 class="card-title">
           Your Tesla <span class="fw-bolder">{{ selectedModal.description }}</span>
         </h5>
-        <p class="card-text">
-          <span class="fw-bold">{{ modalConfigs.description }}</span> - $ {{ modalConfigs.price }}
-        </p>
-        <p class="card-text">
-          <span class="fw-bold">{{ configuration }}</span>
-        </p>
-        <p class="card-text">
-          <span class="fw-bold">{{ modalColor.description }}</span> - $ {{ modalColor.price }}
-        </p>
-        <p class="card-text" v-f="towHitch">
-          <span class="fw-bold">Tow Hitch Package</span> - $ 1000
-        </p>
+        <table class="table">
+          <tbody>
+            <tr>
+              <th width="30%">{{ configuration }}</th>
+              <td></td>
+            </tr>
+            <tr>
+              <th width="30%">{{ modalConfigs.description }}</th>
+              <td>$ {{ modalConfigs.price }}</td>
+            </tr>
+            <tr>
+              <th width="30%">{{ modalColor.description }}</th>
+              <td>$ {{ modalColor.price }}</td>
+            </tr>
+            <tr>
+              <th width="30%">Tow Hitch Package</th>
+              <td>$ 1000</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <div class="card-footer">
-        <span>TOTAL COST</span>
+        <table class="table table-light">
+          <tbody>
+            <tr>
+              <th width="30%">TOTAL COST</th>
+              <td>$ {{ totalCost }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
     <div class="row mt-4">
@@ -69,11 +84,14 @@ export default {
       modalColor: '',
       towHitch: false,
       selectedModal: [],
-      modalConfigs: []
+      modalConfigs: [],
+      totalCost: 0
     }
   },
-  computed() {
-    console.log(this.modalConfigs)
+  computed: {
+    totalCost() {
+      return this.modalConfigs.price + this.modalColor.price + (this.towHitch ? 1000 : 0);
+    }
   }
 }
 </script>

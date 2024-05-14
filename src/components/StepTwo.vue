@@ -36,6 +36,7 @@
           id="includeYoke"
           v-model="includeYoke"
           :checked="towHitch"
+          @click="updateValue('towHitch')"
         />
         <label class="btn btn-outline-primary" for="includeYoke">Tow hitch</label>
 
@@ -45,6 +46,7 @@
           id="includeTow"
           v-model="includeTow"
           :checked="yoke"
+          @click="updateValue('yoke')"
         />
         <label class="btn btn-outline-primary" for="includeTow">Yoke steering wheel</label>
       </div>
@@ -86,7 +88,10 @@ export default {
   },
   computed: {
     urlParam() {
-      return '/step-3/' + this.id + '-' + this.configSelect + '-' + (this.towHitch ? 1 : 0) + '-' + (this.yoke ? 1 : 0)
+      if (this.configSelect) {
+        return '/step-3/' + this.id + '-' + this.configSelect + '-' + (this.towHitch ? 1 : 0) + '-' + (this.yoke ? 1 : 0)
+      }
+      return '';
     }
   },
   methods: {
@@ -101,6 +106,13 @@ export default {
           configData.speed +
           ' KMPH - Price: $ ' +
           configData.price
+      }
+    },
+    updateValue(field) {
+      if (field == 'yoke') {
+        this.yoke = !this.yoke;
+      } else {
+        this.towHitch = !this.towHitch;
       }
     }
   }
