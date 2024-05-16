@@ -1,13 +1,25 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <div class="col-md-4 py-2 bg-light text-center border rounded-pill border-dark">
+      <div
+        class="col-md-4 py-2 bg-light text-center border rounded-pill border-dark"
+      >
         <h2><router-link to="/step-1">Step 1</router-link></h2>
       </div>
-      <div class="col-md-4 py-2 bg-light text-center border rounded-pill border-dark">
-        <h2><router-link :class="this.modal && this.modalColor ? '' : 'disable-link'" :to="stepTwoURL">Step 2</router-link></h2>
+      <div
+        class="col-md-4 py-2 bg-light text-center border rounded-pill border-dark"
+      >
+        <h2>
+          <router-link
+            :class="this.modal && this.modalColor ? '' : 'disable-link'"
+            :to="stepTwoURL"
+            >Step 2</router-link
+          >
+        </h2>
       </div>
-      <div class="col-md-4 py-2 bg-light text-center border rounded-pill border-dark">
+      <div
+        class="col-md-4 py-2 bg-light text-center border rounded-pill border-dark"
+      >
         <h2><router-link to="">Step 3</router-link></h2>
       </div>
     </div>
@@ -15,11 +27,21 @@
     <div class="row">
       <div class="col-md-4 g-3 align-items-center">
         <div class="col-auto">
-          <label for="model" class="col-form-label">Select Model</label>
+          <label for="model" class="col-form-label">Select modal</label>
         </div>
         <div class="col-auto">
-          <select class="form-select" v-model="modal" id="model" @change="selectModal">
-            <option v-for="(modal, key) in modals" :key="key" :value="modal.code">
+          <select
+            class="form-select"
+            v-model="modal"
+            id="model"
+            @change="selectModal"
+          >
+            <option value="0">Select modal</option>
+            <option
+              v-for="(modal, key) in modals"
+              :key="key"
+              :value="modal.code"
+            >
               {{ modal.description }}
             </option>
           </select>
@@ -27,12 +49,21 @@
       </div>
       <div class="col-md-4 g-3 align-items-center">
         <div class="col-auto">
-          <label for="modalColor" class="col-form-label">Select Color</label>
+          <label for="modalColor" class="col-form-label">Select color</label>
         </div>
         <div class="col-auto">
-          <select class="form-select" v-model="modalColor" id="modalColor" @change="getModalColor">
-            <option value="0">Select Model Color</option>
-            <option v-for="(modal, key) in selectedModal.colors" :key="key" :value="modal.code">
+          <select
+            class="form-select"
+            v-model="modalColor"
+            id="modalColor"
+            @change="getModalColor"
+          >
+            <option value="0">Select modal color</option>
+            <option
+              v-for="(modal, key) in selectedModalColors"
+              :key="key"
+              :value="modal.code"
+            >
               {{ modal.description }}
             </option>
           </select>
@@ -46,53 +77,33 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { useStore } from "vuex";
+import { watch, ref, toRef, isRef } from "vue";
 
 export default {
-  mounted() {
-    try {
-      const resp = axios.get('/modal').then((response) => {
-        this.modals = response.data
-        this.selectedModal = this.modals[0]
-      })
-    } catch (e) {
-      this.modals = []
+  setup() {
+    const store = useStore();
+    const modal = ref("0");
+    const modalColor = ref("0");
+    const selectedModalColors = ref([]);
+
+    const modals = store.getters.allModals;
+
+    watch(modal, () => {
+      selectedModalColors.value = store.getters.getSelectedModal[0].colors;
+    });
+
+    function selectModal() {
+      store.dispatch("selectedModal", modal.value);
     }
-  },
-  data() {
+
     return {
-      modals: [],
-      modal: '',
-      modalColor: '',
-      selectedModal: [],
-      currentModalImg: '',
-      stepTwoURL: ''
-    }
+      modal,
+      modalColor,
+      modals,
+      selectedModalColors,
+      selectModal,
+    };
   },
-  computed: {
-    stepTwoURL() {
-      if (this.modal && this.modalColor) {
-        return '/step-2/' + this.modal + '-' + this.modalColor;
-      }
-      return '';
-    }
-  },
-  methods: {
-    selectModal() {
-      if (this.modal !== 'undefined') {
-        this.selectedModal = this.modals.find((item) => item.code === this.modal)
-        this.currentModalImg =
-          'https://interstate21.com/tesla-app/images/' +
-          this.modal +
-          '/' +
-          this.selectedModal.colors[0].code +
-          '.jpg'
-      }
-    },
-    getModalColor() {
-      this.currentModalImg =
-        'https://interstate21.com/tesla-app/images/' + this.modal + '/' + this.modalColor + '.jpg'
-    }
-  }
-}
+};
 </script>
