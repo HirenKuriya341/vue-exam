@@ -1,28 +1,6 @@
 <template>
   <div class="container-fluid">
-    <div class="row">
-      <div
-        class="col-md-4 py-2 bg-light text-center border rounded-pill border-dark"
-      >
-        <h2><router-link to="/step-1">Step 1</router-link></h2>
-      </div>
-      <div
-        class="col-md-4 py-2 bg-light text-center border rounded-pill border-dark"
-      >
-        <h2>
-          <router-link
-            :class="this.modal && this.modalColor ? '' : 'disable-link'"
-            :to="stepTwoURL"
-            >Step 2</router-link
-          >
-        </h2>
-      </div>
-      <div
-        class="col-md-4 py-2 bg-light text-center border rounded-pill border-dark"
-      >
-        <h2><router-link to="">Step 3</router-link></h2>
-      </div>
-    </div>
+    <Steps />
     <h3>Step 1: Choose your model and color</h3>
     <div class="row">
       <div class="col-md-4 g-3 align-items-center">
@@ -70,22 +48,28 @@
         </div>
       </div>
     </div>
-    <div class="row">
-      <img :src="currentModalImg" class="img-fluid" :alt="modalColor" />
+    <div v-if="currentModalImg" class="row d-flex justify-content-center mt-5">
+      <img :src="currentModalImg" class="img-fluid w-75" :alt="modalColor" />
     </div>
   </div>
 </template>
 
 <script>
+import Steps from "../UI/Steps.vue";
+
 import { useStore } from "vuex";
-import { watch, ref, toRef, isRef } from "vue";
+import { ref, watch } from "vue";
 
 export default {
+  components: {
+    Steps,
+  },
   setup() {
     const store = useStore();
     const modal = ref("0");
     const modalColor = ref("0");
     const selectedModalColors = ref([]);
+    const currentModalImg = ref("");
 
     const modals = store.getters.allModals;
 
@@ -97,12 +81,22 @@ export default {
       store.dispatch("selectedModal", modal.value);
     }
 
+    watch(modalColor, () => {
+      currentModalImg.value = store.getters.getSelectedModalImage;
+    });
+
+    function getModalColor() {
+      store.dispatch("selectedModalColor", modalColor.value);
+    }
+
     return {
       modal,
       modalColor,
       modals,
       selectedModalColors,
+      currentModalImg,
       selectModal,
+      getModalColor,
     };
   },
 };

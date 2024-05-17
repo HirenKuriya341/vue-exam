@@ -4,7 +4,8 @@ import axios from 'axios'
 const store = createStore({
     state: {
         allModals: [],
-        selectedModal: []
+        selectedModal: [],
+        currModalImage: 'https://electrek.co/wp-content/uploads/sites/3/2021/05/Tesla-Logo-Hero.jpg?quality=82&strip=all&w=1024'
     },
     mutations: {
         setAllModals(state, data) {
@@ -12,6 +13,9 @@ const store = createStore({
         },
         setSelectedModal(state, data) {
             state.selectedModal = data;
+        },
+        setCurrModalColor(state, color) {
+            state.currModalImage = 'https://interstate21.com/tesla-app/images/' + state.selectedModal[0].code + '/' + color + '.jpg';
         }
     },
     actions: {
@@ -20,9 +24,18 @@ const store = createStore({
                 commit('setAllModals', response.data);
             });
         },
-        selectedModal({ commit, state }, modal) {
+        async selectedModal({ commit, state }, modal) {
             const selData = state.allModals.filter(item => item.code == modal);
-            commit("setSelectedModal", selData);
+            await axios.get('/modal/' + modal).then((response) => {
+                const allData = {
+                    ...selData[0],
+                    ...response.data,
+                }
+                commit("setSelectedModal", allData);
+            });
+        },
+        selectedModalColor({ commit }, modalColor) {
+            commit("setCurrModalColor", modalColor);
         }
     },
     getters: {
@@ -31,6 +44,9 @@ const store = createStore({
         },
         getSelectedModal(state) {
             return state.selectedModal;
+        },
+        getSelectedModalImage(state) {
+            return state.currModalImage;
         }
     }
 })
