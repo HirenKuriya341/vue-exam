@@ -11,8 +11,9 @@
           <select
             class="form-select"
             v-model="configSelect"
-            @change="calConfig"
+            @change="setSelectedConfigs"
           >
+            <option value="0">Select modal configuration</option>
             <option
               v-for="(modal, key) in modalConfigs"
               :key="key"
@@ -33,31 +34,31 @@
         <input
           type="checkbox"
           class="btn-check"
-          id="includeYoke"
-          v-model="includeYoke"
-          :checked="towHitch"
-          @click="updateValue('towHitch')"
+          id="includeTow"
+          v-model="includeTow"
+          :checked="includeTow"
+          @change="setSelectedConfigs"
         />
-        <label class="btn btn-outline-primary" for="includeYoke"
+        <label class="btn btn-outline-primary" for="includeTow"
           >Tow hitch</label
         >
 
         <input
           type="checkbox"
           class="btn-check"
-          id="includeTow"
-          v-model="includeTow"
-          :checked="yoke"
-          @click="updateValue('yoke')"
+          id="includeYoke"
+          v-model="includeYoke"
+          :checked="includeYoke"
+          @change="setSelectedConfigs"
         />
-        <label class="btn btn-outline-primary" for="includeTow"
+        <label class="btn btn-outline-primary" for="includeYoke"
           >Yoke steering wheel</label
         >
       </div>
       <h4 class="mt-3">{{ configuration }}</h4>
     </div>
-    <div class="row mt-4">
-      <img :src="currentModal" class="img-fluid" />
+    <div v-if="currentModalImg" class="row d-flex justify-content-center mt-3">
+      <img :src="currentModalImg" class="img-fluid w-75" :alt="modalColor" />
     </div>
   </div>
 </template>
@@ -66,6 +67,7 @@
 import Steps from "../UI/Steps.vue";
 
 import { useStore } from "vuex";
+import { ref, watch } from "vue";
 
 export default {
   components: {
@@ -73,13 +75,39 @@ export default {
   },
   setup() {
     const store = useStore();
-    const currModalData = store.getters.getSelectedModal.code;
 
+    const currModalData = store.getters.getSelectedModal;
+    const configSelect = ref("0");
+    const includeYoke = ref(currModalData.yoke);
+    const includeTow = ref(currModalData.towHitch);
+    const modalConfigs = currModalData.configs;
+    const currentModalImg = store.getters.getSelectedModalImage;
+    const configuration = ref('');
+
+    watch(configSelect, () => {
+      setTimeout(function() {
+        const details = store.getters.getModalConfigs;
+        configuration.value = 'Range: ' + details.range + ' KM/Charge - Max Speed: ' + details.speed + ' KMPH - Price: $' + details.price;
+      }, 300);
+    })
     
+    function setSelectedConfigs() {
+      store.dispatch('setConfigs', {
+        configID: configSelect.value,
+        yoke: includeYoke.value,
+        towHitch: includeTow.value
+      });
+    }
 
     return {
-      currModalData
-    }
+      configSelect,
+      modalConfigs,
+      includeYoke,
+      includeTow,
+      currentModalImg,
+      configuration,
+      setSelectedConfigs
+    };
   },
 };
 </script>

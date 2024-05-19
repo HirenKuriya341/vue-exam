@@ -3,9 +3,12 @@ import axios from 'axios'
 
 const store = createStore({
     state: {
+        modalColor: 0,
+        modal: 0,
+        currConfigs: 0,
         allModals: [],
         selectedModal: [],
-        currModalImage: 'https://electrek.co/wp-content/uploads/sites/3/2021/05/Tesla-Logo-Hero.jpg?quality=82&strip=all&w=1024'
+        currModalImage: 'https://electrek.co/wp-content/uploads/sites/3/2021/05/Tesla-Logo-Hero.jpg?quality=82&strip=all&w=1024',
     },
     mutations: {
         setAllModals(state, data) {
@@ -14,8 +17,11 @@ const store = createStore({
         setSelectedModal(state, data) {
             state.selectedModal = data;
         },
-        setCurrModalColor(state, color) {
-            state.currModalImage = 'https://interstate21.com/tesla-app/images/' + state.selectedModal[0].code + '/' + color + '.jpg';
+        setCurrModalColor(state, colorImg) {
+            state.currModalImage = colorImg;
+        },
+        setConfigs(state, configs) {
+            state.currConfigs = configs
         }
     },
     actions: {
@@ -26,16 +32,31 @@ const store = createStore({
         },
         async selectedModal({ commit, state }, modal) {
             const selData = state.allModals.filter(item => item.code == modal);
-            await axios.get('/modal/' + modal).then((response) => {
-                const allData = {
-                    ...selData[0],
-                    ...response.data,
-                }
-                commit("setSelectedModal", allData);
+            const modalDetails = await axios.get('/modal/' + modal).then((response) => {
+                return response.data;
             });
+            const allDetails = {
+                ...selData[0],
+                ...modalDetails
+            }
+            state.modal = modal;
+            commit("setSelectedModal", allDetails);
         },
-        selectedModalColor({ commit }, modalColor) {
-            commit("setCurrModalColor", modalColor);
+        selectedModalColor({ commit, state }, color) {
+            state.modalColor = color;
+            var colorImg = 'https://electrek.co/wp-content/uploads/sites/3/2021/05/Tesla-Logo-Hero.jpg?quality=82&strip=all&w=1024';
+            if (color) {
+                colorImg = 'https://interstate21.com/tesla-app/images/' + state.selectedModal.code + '/' + color + '.jpg';
+            }
+            commit("setCurrModalColor", colorImg);
+        },
+        setConfigs({ commit, state }, configData) {
+            const details = state.selectedModal.configs.filter(item => item.id == configData.configID)
+            const allConfigs = {
+                ...configData,
+                ...details[0]
+            }
+            commit("setConfigs", allConfigs);
         }
     },
     getters: {
@@ -45,8 +66,14 @@ const store = createStore({
         getSelectedModal(state) {
             return state.selectedModal;
         },
+        getCurrModalColors(state) {
+            return state.selectedModal.colors;
+        },
         getSelectedModalImage(state) {
             return state.currModalImage;
+        },
+        getModalConfigs(state) {
+            return state.currConfigs;
         }
     }
 })

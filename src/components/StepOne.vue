@@ -48,7 +48,7 @@
         </div>
       </div>
     </div>
-    <div v-if="currentModalImg" class="row d-flex justify-content-center mt-5">
+    <div v-if="currentModalImg" class="row d-flex justify-content-center mt-3">
       <img :src="currentModalImg" class="img-fluid w-75" :alt="modalColor" />
     </div>
   </div>
@@ -69,21 +69,20 @@ export default {
     const modal = ref("0");
     const modalColor = ref("0");
     const selectedModalColors = ref([]);
-    const currentModalImg = ref("");
+    const currentModalImg = ref(store.getters.getSelectedModalImage);
 
     const modals = store.getters.allModals;
 
-    watch(modal, () => {
-      selectedModalColors.value = store.getters.getSelectedModal[0].colors;
+    watch([modal, modalColor], () => {
+      setTimeout(function () {
+        selectedModalColors.value = store.getters.getSelectedModal.colors;
+        currentModalImg.value = store.getters.getSelectedModalImage;
+      }, 300);
     });
 
-    function selectModal() {
-      store.dispatch("selectedModal", modal.value);
+    async function selectModal() {
+      await store.dispatch("selectedModal", modal.value);
     }
-
-    watch(modalColor, () => {
-      currentModalImg.value = store.getters.getSelectedModalImage;
-    });
 
     function getModalColor() {
       store.dispatch("selectedModalColor", modalColor.value);

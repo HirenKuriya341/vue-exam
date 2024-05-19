@@ -1,21 +1,12 @@
 <template>
   <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-4 py-2 bg-light text-center border rounded-pill border-dark">
-        <h2><router-link to="/step-1">Step 1</router-link></h2>
-      </div>
-      <div class="col-md-4 py-2 bg-light text-center border rounded-pill border-dark">
-        <h2><router-link :to="'/step-2/' + this.config">Step 2</router-link></h2>
-      </div>
-      <div class="col-md-4 py-2 bg-light text-center border rounded-pill border-dark">
-        <h2><router-link :to="'/step-3' + this.config">Step 3</router-link></h2>
-      </div>
-    </div>
+    <Steps />
     <h3>Step 3: Summary</h3>
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">
-          Your Tesla <span class="fw-bolder">{{ selectedModal.description }}</span>
+          Your Tesla
+          <span class="fw-bolder">{{ currModalData.description }}</span>
         </h5>
         <table class="table">
           <tbody>
@@ -28,12 +19,12 @@
               <td>$ {{ modalConfigs.price }}</td>
             </tr>
             <tr>
-              <th width="30%">{{ modalColor.description }}</th>
-              <td>$ {{ modalColor.price }}</td>
+              <th width="30%">{{ modalColorDetails[0].description }}</th>
+              <td>$ {{ modalColorDetails[0].price }}</td>
             </tr>
             <tr>
               <th width="30%">Tow Hitch Package</th>
-              <td>$ 1000</td>
+              <td>$ {{ towHitchPackPrice }}</td>
             </tr>
           </tbody>
         </table>
@@ -49,49 +40,41 @@
         </table>
       </div>
     </div>
-    <div class="row mt-4">
-      <img :src="currentModal" class="img-fluid" />
+    <div v-if="currentModalImg" class="row d-flex justify-content-center mt-3">
+      <img :src="currentModalImg" class="img-fluid w-75" :alt="modalColor" />
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
+import { useStore } from "vuex";
+import Steps from "../UI/Steps.vue";
 
 export default {
-  props: ['config'],
-  mounted() {
-    const mData = this.config.split('-')
-
-    const resp = axios.get('/modal/' + mData[0]).then((response) => {
-      this.towHitch = response.data.towHitch
-      this.modalConfigs = response.data.configs.find((item) => item.id == mData[2])
-      this.configuration =
-        'Range: ' + this.modalConfigs.range + ' per Charge - Max Speed: ' + this.modalConfigs.speed
-    })
-
-    axios.get('/modal').then((response) => {
-      this.selectedModal = response.data.find((item) => item.code === mData[0])
-      this.modalColor = this.selectedModal.colors.find((item) => item.code === mData[1])
-    })
-    this.currentModal =
-      'https://interstate21.com/tesla-app/images/' + mData[0] + '/' + mData[1] + '.jpg'
+  components: {
+    Steps,
   },
-  data() {
+  setup() {
+    const store = useStore();
+    
+    const currentModalImg = store.getters.getSelectedModalImage;
+    const currModalData = store.getters.getSelectedModal;
+    const modalConfigs = store.getters.getModalConfigs;
+    const modalColorDetails = currModalData.colors.filter(clr => clr.code == store.state.modalColor);
+
+    const configuration = 'Range: ' + modalConfigs.range + ' KM/Charge - Max Speed: ' + modalConfigs.speed + ' KMPH';
+    const towHitchPackPrice = (modalConfigs.yoke && modalConfigs.towHitch) ? 1000 : 0;
+    const totalCost = modalConfigs.price + modalColorDetails[0].price + towHitchPackPrice;
+
     return {
-      currentModal: '',
-      configuration: '',
-      modalColor: '',
-      towHitch: false,
-      selectedModal: [],
-      modalConfigs: [],
-      totalCost: 0
+      currModalData,
+      currentModalImg,
+      modalColorDetails,
+      modalConfigs,
+      configuration,
+      totalCost,
+      towHitchPackPrice
     }
   },
-  computed: {
-    totalCost() {
-      return this.modalConfigs.price + this.modalColor.price + (this.towHitch ? 1000 : 0);
-    }
-  }
-}
+};
 </script>
