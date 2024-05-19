@@ -4,6 +4,7 @@ import store from "./store.js";
 import StepOne from "./components/StepOne.vue";
 import StepTwo from "./components/StepTwo.vue";
 import StepThree from "./components/StepThree.vue";
+import NotFound from "./UI/NotFound.vue";
 
 const routers = createRouter({
   history: createWebHistory(),
@@ -16,6 +17,7 @@ const routers = createRouter({
       component: StepThree,
       meta: { requireData: true },
     },
+    { path: "/:404(.*)", component: NotFound },
   ],
 });
 
