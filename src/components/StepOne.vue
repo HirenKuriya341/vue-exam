@@ -66,9 +66,12 @@ export default {
   },
   setup() {
     const store = useStore();
-    const modal = ref("0");
-    const modalColor = ref("0");
-    const selectedModalColors = ref([]);
+
+    const modalDetails = store.getters.getCurrModalDetails;
+
+    const modal = ref(modalDetails.modal);
+    const modalColor = ref(modalDetails.color);
+    const selectedModalColors = ref(modalDetails.colors);
     const currentModalImg = ref(store.getters.getSelectedModalImage);
 
     const modals = store.getters.allModals;

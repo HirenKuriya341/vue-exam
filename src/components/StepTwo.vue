@@ -76,10 +76,13 @@ export default {
   setup() {
     const store = useStore();
 
+    const modalDetails = store.getters.getCurrModalDetails;
+    console.log(modalDetails);
+
     const currModalData = store.getters.getSelectedModal;
-    const configSelect = ref("0");
-    const includeYoke = ref(currModalData.yoke);
-    const includeTow = ref(currModalData.towHitch);
+    const configSelect = ref(modalDetails.configID);
+    const includeYoke = ref(modalDetails.yoke);
+    const includeTow = ref(modalDetails.towHitch);
     const modalConfigs = currModalData.configs;
     const currentModalImg = store.getters.getSelectedModalImage;
     const configuration = ref('');

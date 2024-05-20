@@ -9,6 +9,7 @@ const store = createStore({
         allModals: [],
         selectedModal: [],
         currModalImage: 'https://electrek.co/wp-content/uploads/sites/3/2021/05/Tesla-Logo-Hero.jpg?quality=82&strip=all&w=1024',
+        currModalDetails: []
     },
     mutations: {
         setAllModals(state, data) {
@@ -74,6 +75,16 @@ const store = createStore({
         },
         getModalConfigs(state) {
             return state.currConfigs;
+        },
+        getCurrModalDetails(state) {
+            return state.currModalDetails = {
+                modal: state.modal,
+                color: state.modalColor,
+                configID: state.currConfigs.configID ?? 0,
+                colors: state.selectedModal.colors ?? [],
+                towHitch: state.currConfigs.towHitch ?? state.selectedModal.towHitch,
+                yoke: state.currConfigs.yoke ?? state.selectedModal.yoke,
+            }
         }
     }
 })
