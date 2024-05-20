@@ -5,11 +5,12 @@ import StepOne from "./components/StepOne.vue";
 import StepTwo from "./components/StepTwo.vue";
 import StepThree from "./components/StepThree.vue";
 import NotFound from "./UI/NotFound.vue";
+import Index from "./UI/Index.vue";
 
 const routers = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: "/", redirect: "/step-1" },
+    { path: "/", component: Index },
     { path: "/step-1", component: StepOne },
     { path: "/step-2", component: StepTwo, meta: { requireData: true } },
     {
