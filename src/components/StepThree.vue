@@ -1,68 +1,88 @@
 <template>
   <div class="container-fluid">
     <Steps />
-    <h3>Step 3: Summary</h3>
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">
-          Your Tesla
-          <span class="fw-bolder">{{ currModalData.description }}</span>
-        </h5>
-        <table class="table">
-          <tbody>
-            <tr>
-              <th width="30%">{{ configuration }}</th>
-              <td></td>
-            </tr>
-            <tr>
-              <th width="30%">{{ modalConfigs.description }}</th>
-              <td>$ {{ modalConfigs.price }}</td>
-            </tr>
-            <tr>
-              <th width="30%">{{ modalColorDetails[0].description }}</th>
-              <td>$ {{ modalColorDetails[0].price }}</td>
-            </tr>
-            <tr>
-              <th width="30%">Tow Hitch Package</th>
-              <td>$ {{ towHitchPackPrice }}</td>
-            </tr>
-          </tbody>
-        </table>
+    <BaseHeading headingText="Step 3: Summary" />
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">
+              Your Tesla
+              <span class="fw-bolder">{{ currModalData.description }}</span>
+            </h5>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <th>{{ configuration }}</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th>{{ modalConfigs.description }}</th>
+                  <td>$ {{ modalConfigs.price }}</td>
+                </tr>
+                <tr>
+                  <th>{{ modalColorDetails[0].description }}</th>
+                  <td>$ {{ modalColorDetails[0].price }}</td>
+                </tr>
+                <tr>
+                  <th>Tow Hitch Package</th>
+                  <td>$ {{ towHitchPackPrice }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card-footer">
+            <table class="table table-light">
+              <tbody>
+                <tr>
+                  <th width="30%">TOTAL COST</th>
+                  <td>$ {{ totalCost }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <div class="card-footer">
-        <table class="table table-light">
-          <tbody>
-            <tr>
-              <th width="30%">TOTAL COST</th>
-              <td>$ {{ totalCost }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="col-md-8">
+        <BaseImage v-if="currentModalImg" :modalImage="currentModalImg" />
       </div>
     </div>
-    <base-image v-if="currentModalImg" :modalImage="currentModalImg"></base-image>
   </div>
 </template>
 
 <script>
-import { useStore } from "vuex";
 import Steps from "../UI/Steps.vue";
+import BaseHeading from "../UI/BaseHeading.vue";
+import BaseImage from "../UI/BaseImage.vue";
+
+import { useStore } from "vuex";
 
 export default {
   components: {
     Steps,
+    BaseHeading,
+    BaseImage,
   },
   setup() {
     const store = useStore();
-    
+
     const currentModalImg = store.getters.getSelectedModalImage;
     const currModalData = store.getters.getSelectedModal;
     const modalConfigs = store.getters.getModalConfigs;
-    const modalColorDetails = currModalData.colors.filter(clr => clr.code == store.state.modalColor);
+    const modalColorDetails = currModalData.colors.filter(
+      (clr) => clr.code == store.state.modalColor
+    );
 
-    const configuration = 'Range: ' + modalConfigs.range + ' KM/Charge - Max Speed: ' + modalConfigs.speed + ' KMPH';
-    const towHitchPackPrice = (modalConfigs.yoke && modalConfigs.towHitch) ? 1000 : 0;
-    const totalCost = modalConfigs.price + modalColorDetails[0].price + towHitchPackPrice;
+    const configuration =
+      "Range: " +
+      modalConfigs.range +
+      " KM/Charge - Max Speed: " +
+      modalConfigs.speed +
+      " KMPH";
+    const towHitchPackPrice =
+      modalConfigs.yoke && modalConfigs.towHitch ? 1000 : 0;
+    const totalCost =
+      modalConfigs.price + modalColorDetails[0].price + towHitchPackPrice;
 
     return {
       currModalData,
@@ -71,8 +91,8 @@ export default {
       modalConfigs,
       configuration,
       totalCost,
-      towHitchPackPrice
-    }
+      towHitchPackPrice,
+    };
   },
 };
 </script>
