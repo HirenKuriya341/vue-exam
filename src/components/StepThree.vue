@@ -40,9 +40,7 @@
         </table>
       </div>
     </div>
-    <div v-if="currentModalImg" class="row d-flex justify-content-center mt-3">
-      <img :src="currentModalImg" class="img-fluid w-75" :alt="modalColor" />
-    </div>
+    <base-image v-if="currentModalImg" :modalImage="currentModalImg"></base-image>
   </div>
 </template>
 

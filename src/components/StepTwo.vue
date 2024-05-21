@@ -57,9 +57,7 @@
       </div>
       <h4 class="mt-3">{{ configuration }}</h4>
     </div>
-    <div v-if="currentModalImg" class="row d-flex justify-content-center mt-3">
-      <img :src="currentModalImg" class="img-fluid w-75" :alt="modalColor" />
-    </div>
+    <base-image v-if="currentModalImg" :modalImage="currentModalImg"></base-image>
   </div>
 </template>
 
@@ -77,7 +75,6 @@ export default {
     const store = useStore();
 
     const modalDetails = store.getters.getCurrModalDetails;
-    console.log(modalDetails);
 
     const currModalData = store.getters.getSelectedModal;
     const configSelect = ref(modalDetails.configID);

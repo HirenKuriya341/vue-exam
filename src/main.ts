@@ -12,8 +12,11 @@ import store from './store.js'
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.js';
 
+import BaseImage from './UI/BaseImage.vue';
+
 const app = createApp(App)
 app.use(router)
+app.component('base-image', BaseImage);
 
 store.dispatch('fetchAllModals').then(() => {
     app.use(store)
