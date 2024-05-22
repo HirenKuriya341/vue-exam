@@ -18,15 +18,15 @@
                 </tr>
                 <tr>
                   <th>{{ modalConfigs.description }}</th>
-                  <td>$ {{ modalConfigs.price }}</td>
+                  <td class="text-end">$ {{ modalConfigs.price }}</td>
                 </tr>
                 <tr>
                   <th>{{ modalColorDetails[0].description }}</th>
-                  <td>$ {{ modalColorDetails[0].price }}</td>
+                  <td class="text-end">$ {{ modalColorDetails[0].price }}</td>
                 </tr>
                 <tr>
                   <th>Tow Hitch Package</th>
-                  <td>$ {{ towHitchPackPrice }}</td>
+                  <td class="text-end">$ {{ towHitchPackPrice }}</td>
                 </tr>
               </tbody>
             </table>
@@ -35,8 +35,8 @@
             <table class="table table-light">
               <tbody>
                 <tr>
-                  <th width="30%">TOTAL COST</th>
-                  <td>$ {{ totalCost }}</td>
+                  <th>TOTAL COST</th>
+                  <td class="text-end">$ {{ totalCost }}</td>
                 </tr>
               </tbody>
             </table>

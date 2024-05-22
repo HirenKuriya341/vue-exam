@@ -88,7 +88,9 @@ export default {
     const modals = store.getters.allModals;
 
     watch([modal, modalColor], (oldVal, newVal) => {
-      isLoading.value = true;
+      if (newVal[1] != oldVal[1]) {
+        isLoading.value = true;
+      }
       setTimeout(function () {
         selectedModalColors.value = store.getters.getSelectedModal.colors;
         currentModalImg.value = store.getters.getSelectedModalImage;
